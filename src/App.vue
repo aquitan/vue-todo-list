@@ -1,28 +1,91 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div id="app" class="container">
+    <Header :todosLeft="todosLeft"/>
+    <SortItems
+        @allItems="allItems"
+        @onImportant="onImportant"
+        @onItemDone="onItemDone"
+        :todos="todos"
+        :filter="filter"
+    />
+    <TodoList
+        v-if="filteredTodos.length"
+        @removeItem="removeTodoItem"
+        :todos="filteredTodos"
+    />
+    <p class="add-todos" v-else>Add Some Todos!</p>
+    <AddItem
+        @addItem="addItem"
+        :todos="todos"
+    />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import TodoList from "@/components/TodoList";
+import AddItem from "@/components/AddItem";
+import SortItems from "@/components/SortItems";
+import Header from "@/components/Header";
 
 export default {
-  name: 'App',
+  data() {
+    return {
+      todos: [
+        {text: 'Rule', id: 1, done: false, important: false}
+      ],
+      filter: 'all'
+    }
+  },
   components: {
-    HelloWorld
+    AddItem,
+    TodoList,
+    SortItems,
+    Header
+  },
+  methods: {
+    addItem(todoItem) {
+      this.todos.push(todoItem);
+    },
+    removeTodoItem(id) {
+      let index = this.todos.findIndex((el) => el.id === id);
+      this.todos = [...this.todos.slice(0, index), ...this.todos.slice(index + 1)];
+    },
+    onItemDone(filterProp) {
+      this.filter = filterProp
+      console.log('Filter---', this.filter)
+
+    },
+    allItems(filterProp) {
+      this.filter = filterProp
+      console.log('Filter---', this.filter)
+    },
+    onImportant(filterProp) {
+      this.filter = filterProp
+      console.log('Filter---', this.filter)
+    }
+  },
+  computed: {
+    todosLeft() {
+      return this.todos.filter(item => !item.done).length
+    },
+    filteredTodos() {
+      if (this.filter === 'all') {
+        return this.todos
+      } else if (this.filter === 'done') {
+        return this.todos.filter(item => item.done);
+      } else if (this.filter === 'important') {
+        return this.todos.filter(item => item.important);
+      }
+
+      return this.todos
+    }
   }
 }
+
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+  .add-todos {
+    text-align: center;
+  }
 </style>
