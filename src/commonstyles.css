@@ -1,0 +1,9 @@
+.view-link {
+    color: cornflowerblue;
+    font-weight: bold;
+}
+
+.view-link:hover {
+    color: darkslateblue;
+    text-decoration: none;
+}
